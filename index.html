@@ -35,6 +35,11 @@ button{font:inherit;color:inherit;background:none;border:1px solid currentColor;
 button:focus-visible,.pol:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
 .nav button[hidden]{display:inline-block!important;visibility:hidden}
 
+/* Volume Control Styles */
+.vol-wrap { display:flex; align-items:center; gap:8px; }
+input[type="range"] { accent-color: var(--amber); width: 70px; cursor: pointer; background: transparent; }
+body.dawn input[type="range"] { accent-color: #7a3d12; }
+
 #boot{position:fixed;inset:0;z-index:80;background:#000;display:grid;place-content:center;text-align:center;gap:12px;cursor:pointer;color:var(--amber)}
 #boot p{font-size:34px;animation:blink 1.4s steps(2) infinite}
 #boot small{font-size:18px;opacity:.7}
@@ -85,11 +90,14 @@ body.dawn h2{color:#7a3d12}
   <span class="rec"><i></i>REC</span>
   <span id="tc">00:00:00</span>
   <span id="pg">1/5</span>
-  <button id="mute" aria-label="Toggle background music">♪ ON</button>
+  <div class="vol-wrap">
+    <button id="mute" aria-label="Toggle background music">♪ ON</button>
+    <input type="range" id="volSlider" min="0" max="1" step="0.01" value="0.35" aria-label="Volume Slider">
+  </div>
 </header>
 
 <main>
-  <!-- PAGE 1: note before anything else (EDIT the words freely) -->
+  <!-- PAGE 1: note before anything else -->
   <section class="page center" id="intro">
     <div class="note">
       <p>Hey Kirstie.</p>
@@ -99,21 +107,21 @@ body.dawn h2{color:#7a3d12}
     </div>
   </section>
 
-  <!-- PAGE 2: Genshin polaroids -->
+  <!-- PAGE 2: main video (message) - MOVED HERE -->
   <section class="page" id="t1">
     <h2>Tape 1</h2>
+    <p class="sub">Dis the long one, about ten minutes. Headphones on if you can, and press play when you’re ready.</p>
+    <div class="crt"><video class="vid" controls playsinline preload="metadata" src="main-video.mp4"></video></div>
+  </section>
+
+  <!-- PAGE 3: Genshin polaroids - MOVED HERE -->
+  <section class="page" id="t2">
+    <h2>Tape 2</h2>
     <p class="sub">Genshin co-ops, us posing instead of doing the domain. Tap a photo to flip it ^^!</p>
     <div class="wall" id="wall"></div>
   </section>
 
-  <!-- PAGE 3: main video (message) -->
-  <section class="page" id="t2">
-    <h2>Tape 2</h2>
-    <p class="sub">Dis the  long one, about ten minutes. Headphones on if you can, and press play when you’re ready.</p>
-    <div class="crt"><video class="vid" controls playsinline preload="metadata" src="main-video.mp4"></video></div>
-  </section>
-
-  <!-- PAGE 4: Minecraft cake (last video, leads into the epilogue) -->
+  <!-- PAGE 4: Minecraft cake -->
   <section class="page" id="t3">
     <h2>Tape 3</h2>
     <p class="sub">We never actually played Minecraft together, soo this is new. I made you a cake. It’s a little awkward. Enjoy anyway 0.0</p>
@@ -143,7 +151,6 @@ body.dawn h2{color:#7a3d12}
 <audio id="ambient" src="ambient.mp3" loop preload="auto"></audio>
 
 <script>
-// ---- EDIT ME: one caption per Genshin photo (files: genshin-1.jpg ... genshin-7.jpg)
 const captions = [
   "First time at heart island with you (thanks for the free luxurious chest)",
   "Heart island pt.2, I like the shadows",
@@ -165,20 +172,35 @@ captions.forEach((c, i) => {
   wall.appendChild(b);
 });
 
-// music
-const amb = $('#ambient'), LEVEL = 0.35;
+// music & volume logic
+const amb = $('#ambient');
+const volSlider = $('#volSlider');
 let muted = false, ducked = false, fx;
 amb.volume = 0;
+
 function sync() {
   clearInterval(fx);
-  const to = (muted || ducked) ? 0 : LEVEL;
+  const targetLevel = parseFloat(volSlider.value);
+  const to = (muted || ducked) ? 0 : targetLevel;
   fx = setInterval(() => {
     const d = to - amb.volume;
     if (Math.abs(d) < 0.02) { amb.volume = to; clearInterval(fx); return; }
     amb.volume = Math.min(1, Math.max(0, amb.volume + Math.sign(d) * 0.02));
   }, 50);
 }
-$('#mute').onclick = e => { muted = !muted; e.target.textContent = muted ? '♪ OFF' : '♪ ON'; sync(); };
+
+$('#mute').onclick = e => { 
+  muted = !muted; 
+  e.target.textContent = muted ? '♪ OFF' : '♪ ON'; 
+  sync(); 
+};
+
+volSlider.addEventListener('input', () => {
+  muted = false;
+  $('#mute').textContent = '♪ ON';
+  sync();
+});
+
 document.querySelectorAll('.vid').forEach(v => {
   v.addEventListener('play', () => { ducked = true; sync(); });
   v.addEventListener('pause', () => {
@@ -224,7 +246,7 @@ function boot() {
 $('#boot').addEventListener('click', boot);
 $('#boot').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') boot(); });
 
-// last video (Minecraft cake) ends -> black -> epilogue
+// last video ends -> black -> epilogue
 $('#finalVideo').addEventListener('ended', () => {
   const black = $('#blackout');
   black.classList.add('on');
