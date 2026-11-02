@@ -35,18 +35,60 @@ button{font:inherit;color:inherit;background:none;border:1px solid currentColor;
 button:focus-visible,.pol:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
 .nav button[hidden]{display:inline-block!important;visibility:hidden}
 
-/* Volume Control Styles */
 .vol-wrap { display:flex; align-items:center; gap:8px; }
 input[type="range"] { accent-color: var(--amber); width: 70px; cursor: pointer; background: transparent; }
 body.dawn input[type="range"] { accent-color: #7a3d12; }
 
-#boot{position:fixed;inset:0;z-index:80;background:#000;display:grid;place-content:center;text-align:center;gap:12px;cursor:pointer;color:var(--amber)}
-#boot p{font-size:34px;animation:blink 1.4s steps(2) infinite}
-#boot small{font-size:18px;opacity:.7}
-#boot.off{animation:crt .7s forwards;pointer-events:none}
-@keyframes crt{0%{opacity:1;filter:brightness(2)}40%{opacity:1;clip-path:inset(48% 0 48% 0)}100%{opacity:0;clip-path:inset(50% 50% 50% 50%)}}
+/* Boot & Retro Glitch Effect */
+#boot{position:fixed;inset:0;z-index:80;background:#000;display:grid;place-content:center;text-align:center;gap:12px;cursor:pointer;color:var(--amber);overflow:hidden;}
+#boot p{font-size:34px;animation:blink 1.4s steps(2) infinite; position:relative; z-index:2;}
+#boot small{font-size:18px;opacity:.7; position:relative; z-index:2;}
 
-/* pages: one at a time, tape-cut transition */
+#boot.off{animation:retroGlitch .6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; pointer-events:none;}
+@keyframes retroGlitch{
+  0% { clip-path: inset(0 0 0 0); filter: hue-rotate(0deg); transform: translate(0); }
+  10% { clip-path: inset(10% 0 80% 0); filter: hue-rotate(90deg) contrast(2); transform: translate(-15px, 5px); }
+  20% { clip-path: inset(80% 0 5% 0); filter: hue-rotate(-90deg) invert(1); transform: translate(15px, -5px); }
+  30% { clip-path: inset(30% 0 40% 0); filter: hue-rotate(180deg) contrast(3); transform: translate(-10px, 10px); }
+  40% { clip-path: inset(60% 0 20% 0); filter: hue-rotate(0deg); transform: translate(10px, -10px); background: #fff; color: #000; }
+  50% { clip-path: inset(20% 0 60% 0); transform: translate(-5px, 5px); }
+  60% { clip-path: inset(0 0 0 0); transform: translate(0); opacity: 1; filter: brightness(3) sepia(1); }
+  100% { opacity: 0; filter: brightness(1); transform: scale(1.05); }
+}
+
+/* Arcade Background Elements */
+.arcade { position: absolute; top: 25%; width: 100%; height: 60px; z-index: 1; opacity: 0.4; pointer-events: none; }
+.chase-wrapper { 
+  display: flex; gap: 20px; align-items: center;
+  position: absolute; left: -300px;
+  animation: chase 7s linear infinite; 
+}
+@keyframes chase { 0% { transform: translateX(-10vw); } 100% { transform: translateX(120vw); } }
+
+.pacman {
+  width: 0; height: 0;
+  border: 18px solid var(--amber); border-right-color: transparent; border-radius: 50%;
+  animation: chomp .3s infinite; margin-right: 15px;
+}
+@keyframes chomp { 0%, 100% { border-right-color: transparent; } 50% { border-right-color: var(--amber); } }
+
+.ghost {
+  width: 32px; height: 36px; border-radius: 16px 16px 0 0; position: relative;
+  clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 83% 90%, 66% 100%, 50% 90%, 33% 100%, 16% 90%, 0% 100%);
+}
+.ghost.blinky { background: #ff0000; }
+.ghost.pinky { background: #ffb8ff; }
+.ghost.inky { background: #00ffff; }
+.ghost.clyde { background: #ffb852; }
+
+.ghost::before {
+  content: ""; position: absolute; top: 8px; left: 5px; width: 8px; height: 10px; background: white; border-radius: 50%; box-shadow: 12px 0 0 white;
+}
+.ghost::after {
+  content: ""; position: absolute; top: 11px; left: 7px; width: 4px; height: 4px; background: #0000cc; border-radius: 50%; box-shadow: 12px 0 0 #0000cc;
+}
+
+/* pages */
 .page{display:none;max-width:900px;margin:0 auto;padding:36px 18px}
 .page.active{display:block;animation:cut .4s}
 @keyframes cut{0%{opacity:0;filter:brightness(3) blur(3px);transform:translateX(-8px)}60%{opacity:1;filter:brightness(1.5)}100%{filter:none;transform:none}}
@@ -79,12 +121,24 @@ body.dawn h2{color:#7a3d12}
 .art img{width:100%;display:block;border-radius:6px;background:rgba(255,255,255,.3);box-shadow:0 14px 40px rgba(122,61,18,.35)}
 .art video{position:absolute;right:-6%;bottom:-6%;width:44%;border-radius:50%;aspect-ratio:1;object-fit:cover;border:4px solid var(--frame)}
 #epilogue h2{font-family:var(--hand);font-weight:700;font-size:clamp(42px,9vw,64px)}
-@media (prefers-reduced-motion:reduce){body::after,.rec i,#boot p,.page.active{animation:none}.pol .in{transition:none}}
+@media (prefers-reduced-motion:reduce){body::after,.rec i,#boot p,.page.active{animation:none}.pol .in{transition:none} .chase-wrapper{animation:none}}
 </style>
 </head>
 <body>
 
-<div id="boot" role="button" tabindex="0"><p>TAP TO TURN ON</p><small>sound on · headphones help :]</small></div>
+<div id="boot" role="button" tabindex="0">
+  <div class="arcade">
+    <div class="chase-wrapper">
+      <div class="pacman"></div>
+      <div class="ghost blinky"></div>
+      <div class="ghost pinky"></div>
+      <div class="ghost inky"></div>
+      <div class="ghost clyde"></div>
+    </div>
+  </div>
+  <p>TAP TO START</p>
+  <small>sound on · headphones help :]</small>
+</div>
 
 <header class="hud">
   <span class="rec"><i></i>REC</span>
@@ -107,14 +161,14 @@ body.dawn h2{color:#7a3d12}
     </div>
   </section>
 
-  <!-- PAGE 2: main video (message) - MOVED HERE -->
+  <!-- PAGE 2: main video (message) -->
   <section class="page" id="t1">
     <h2>Tape 1</h2>
     <p class="sub">Dis the long one, about ten minutes. Headphones on if you can, and press play when you’re ready.</p>
     <div class="crt"><video class="vid" controls playsinline preload="metadata" src="main-video.mp4"></video></div>
   </section>
 
-  <!-- PAGE 3: Genshin polaroids - MOVED HERE -->
+  <!-- PAGE 3: Genshin polaroids -->
   <section class="page" id="t2">
     <h2>Tape 2</h2>
     <p class="sub">Genshin co-ops, us posing instead of doing the domain. Tap a photo to flip it ^^!</p>
@@ -233,7 +287,7 @@ function boot() {
   if (document.body.classList.contains('on')) return;
   document.body.classList.add('on');
   $('#boot').classList.add('off');
-  setTimeout(() => $('#boot').remove(), 700);
+  setTimeout(() => $('#boot').remove(), 600); // reduced to match the new glitch speed
   amb.play().catch(() => {});
   sync();
   go(0);
