@@ -1,3 +1,12 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>For Kirstie</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
 <style>
 :root{--tape:#120d0b;--amber:#ffb000;--rec:#ff3b2f;--frame:#ebe6da;--ink:#2a211b;--dawn1:#ffd9a0;--dawn2:#f6a96b;
   --hud:'VT323','Courier New',monospace;--hand:'Caveat','Comic Sans MS',cursive}
@@ -43,3 +52,188 @@ body.dawn h2{color:#7a3d12}
 .center{text-align:center}
 .page.center.active{min-height:62vh;display:grid;place-content:center;justify-items:center;gap:18px}
 .center .note{justify-items:center}
+.letter{text-align:left;max-width:600px;display:grid;gap:4px}
+.letter .sub{margin:0 0 12px}
+
+.wall{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:26px 18px}
+.pol{perspective:900px;background:none;border:0;padding:0;aspect-ratio:5/4;width:100%}
+.pol .in{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .6s}
+.pol.flip .in{transform:rotateY(180deg)}
+.pol:nth-child(odd){transform:rotate(-2.2deg)}.pol:nth-child(even){transform:rotate(1.8deg)}.pol:nth-child(3n){transform:rotate(-.8deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;background:var(--frame);padding:10px 10px 44px;box-shadow:0 8px 20px rgba(0,0,0,.5)}
+.face img{width:100%;height:100%;object-fit:cover;background:#3a302a;display:block;filter:sepia(.25) contrast(1.05)}
+.face span{position:absolute;bottom:8px;right:12px;font-size:17px;color:#d46a00}
+.back{transform:rotateY(180deg);display:grid;place-content:center;padding:18px;color:var(--ink);font-family:var(--hand);font-size:27px;line-height:1.1;text-align:center}
+
+.crt{border:3px solid #2b2018;border-radius:14px;overflow:hidden;background:#000;box-shadow:0 0 40px rgba(255,176,0,.15)}
+.crt video{width:100%;display:block;max-height:72vh}
+#blackout{position:fixed;inset:0;background:#000;z-index:70;opacity:0;pointer-events:none;transition:opacity 1.5s}
+#blackout.on{opacity:1}
+
+.art{position:relative;width:min(360px,84vw)}
+.art img{width:100%;display:block;border-radius:6px;background:rgba(255,255,255,.3);box-shadow:0 14px 40px rgba(122,61,18,.35)}
+.art video{position:absolute;right:-6%;bottom:-6%;width:44%;border-radius:50%;aspect-ratio:1;object-fit:cover;border:4px solid var(--frame)}
+#epilogue h2{font-family:var(--hand);font-weight:700;font-size:clamp(42px,9vw,64px)}
+@media (prefers-reduced-motion:reduce){body::after,.rec i,#boot p,.page.active{animation:none}.pol .in{transition:none}}
+</style>
+</head>
+<body>
+
+<div id="boot" role="button" tabindex="0"><p>TAP TO TURN ON</p><small>sound on · headphones help :]</small></div>
+
+<header class="hud">
+  <span class="rec"><i></i>REC</span>
+  <span id="tc">00:00:00</span>
+  <span id="pg">1/5</span>
+  <button id="mute" aria-label="Toggle background music">♪ ON</button>
+</header>
+
+<main>
+  <!-- PAGE 1: note before anything else (EDIT the words freely) -->
+  <section class="page center" id="intro">
+    <div class="note">
+      <p>Hey Kirstie.</p>
+      <p>Uhmm it's been awhile, I made this for you but i'm not asking for anything.</p>
+      <p>Soooo, no reply needed... no pressure alr?</p>
+      <p>I just made you a small collection of stuff for your 20th. Go through them in order thenn :p</p>
+    </div>
+  </section>
+
+  <!-- PAGE 2: Genshin polaroids -->
+  <section class="page" id="t1">
+    <h2>Tape 1</h2>
+    <p class="sub">Genshin co-ops, us posing instead of doing the domain. Tap a photo to flip it ^^!</p>
+    <div class="wall" id="wall"></div>
+  </section>
+
+  <!-- PAGE 3: main video (message) -->
+  <section class="page" id="t2">
+    <h2>Tape 2</h2>
+    <p class="sub">Dis the  long one, about ten minutes. Headphones on if you can, and press play when you’re ready.</p>
+    <div class="crt"><video class="vid" controls playsinline preload="metadata" src="main-video.mp4"></video></div>
+  </section>
+
+  <!-- PAGE 4: Minecraft cake (last video, leads into the epilogue) -->
+  <section class="page" id="t3">
+    <h2>Tape 3</h2>
+    <p class="sub">We never actually played Minecraft together, soo this is new. I made you a cake. It’s a little awkward. Enjoy anyway 0.0</p>
+    <div class="crt"><video class="vid" id="finalVideo" controls playsinline preload="metadata" src="minecraft.mp4"></video></div>
+  </section>
+
+  <!-- PAGE 5: epilogue -->
+  <section class="page center" id="epilogue">
+    <div class="art">
+      <img src="drawing.jpg" alt="A drawing of me holding a bouquet, with a birthday message for Kirsten">
+      <video src="bouquet-loop.mp4" autoplay muted loop playsinline></video>
+    </div>
+    <h2>Happy 20th, Kirstie ^^</h2>
+    <div class="letter">
+      <p class="sub">Something I don’t think I ever told you thou, ahmm... knowing you made me a little better at some things.</p>
+      <p class="sub">Listening, mostly. Being the one who stays up a bit later when someone’s having a rough night. I didn’t plan that, it just happened because you were someone worth showing up for. Same goes for you being there when I needed someone to talk to (you calmed me down when I was feeling like I was about to die if you remember, and I’ll forever thank you for that ^3^)</p>
+      <p class="sub">Also, you’re turning twenty, and people act like you’re supposed to have everything sorted by now. Honestly, most people at twenty are just winging it and acting confident (been there done that). You’re allowed to change your mind, make a few dumb mistakes, and take longer than you planned. It’s still your story.</p>
+      <p class="sub">So that’s the end of the tape. It’s a small one, but I put real effort into it, and all of it was for you. If it got even one smile out of you, that’s enough for me.</p>
+      <p class="sub">Okay. Pressing stop now. Happy birthday, silly ♥️!</p>
+    </div>
+    <p class="sub" style="text-align:center;margin:0">P.S. check your Genshin mail ✉</p>
+  </section>
+</main>
+
+<nav class="nav"><button id="back">◀ BACK</button><button id="next">NEXT ▶</button></nav>
+<div id="blackout"></div>
+<audio id="ambient" src="ambient.mp3" loop preload="auto"></audio>
+
+<script>
+// ---- EDIT ME: one caption per Genshin photo (files: genshin-1.jpg ... genshin-7.jpg)
+const captions = [
+  "First time at heart island with you (thanks for the free luxurious chest)",
+  "Heart island pt.2, I like the shadows",
+  "Bench in Liyue🪑",
+  "One of my fave pics that we took",
+  "Whatcha looking at? 👁️👄👁️",
+  "Sleddddd 🛷",
+  "Sleepyhead 😴"
+];
+
+const $ = s => document.querySelector(s);
+const wall = $('#wall');
+captions.forEach((c, i) => {
+  const b = document.createElement('button');
+  b.className = 'pol';
+  b.setAttribute('aria-label', 'Flip photo ' + (i + 1));
+  b.innerHTML = `<div class="in"><div class="face"><img src="genshin-${i + 1}.jpg" alt="" loading="lazy"><span>NOV 07</span></div><div class="face back">${c}</div></div>`;
+  b.onclick = () => b.classList.toggle('flip');
+  wall.appendChild(b);
+});
+
+// music
+const amb = $('#ambient'), LEVEL = 0.35;
+let muted = false, ducked = false, fx;
+amb.volume = 0;
+function sync() {
+  clearInterval(fx);
+  const to = (muted || ducked) ? 0 : LEVEL;
+  fx = setInterval(() => {
+    const d = to - amb.volume;
+    if (Math.abs(d) < 0.02) { amb.volume = to; clearInterval(fx); return; }
+    amb.volume = Math.min(1, Math.max(0, amb.volume + Math.sign(d) * 0.02));
+  }, 50);
+}
+$('#mute').onclick = e => { muted = !muted; e.target.textContent = muted ? '♪ OFF' : '♪ ON'; sync(); };
+document.querySelectorAll('.vid').forEach(v => {
+  v.addEventListener('play', () => { ducked = true; sync(); });
+  v.addEventListener('pause', () => {
+    if (v.id === 'finalVideo' && v.ended) return;
+    ducked = false; sync();
+  });
+});
+
+// pages
+const ids = ['intro', 't1', 't2', 't3', 'epilogue'];
+let cur = 0;
+function go(i) {
+  i = Math.max(0, Math.min(ids.length - 1, i));
+  document.querySelectorAll('.vid').forEach(v => v.pause());
+  ids.forEach((id, n) => $('#' + id).classList.toggle('active', n === i));
+  cur = i;
+  document.body.classList.toggle('dawn', i === ids.length - 1);
+  $('#pg').textContent = (i + 1) + '/' + ids.length;
+  $('#back').hidden = i === 0;
+  $('#next').hidden = i === ids.length - 1;
+  history.replaceState(null, '', '#' + ids[i]);
+  window.scrollTo(0, 0);
+}
+$('#back').onclick = () => go(cur - 1);
+$('#next').onclick = () => go(cur + 1);
+
+// boot
+let secs = 0;
+function boot() {
+  if (document.body.classList.contains('on')) return;
+  document.body.classList.add('on');
+  $('#boot').classList.add('off');
+  setTimeout(() => $('#boot').remove(), 700);
+  amb.play().catch(() => {});
+  sync();
+  go(0);
+  setInterval(() => {
+    secs++;
+    const p = n => String(n).padStart(2, '0');
+    $('#tc').textContent = `${p(Math.floor(secs / 3600))}:${p(Math.floor(secs / 60) % 60)}:${p(secs % 60)}`;
+  }, 1000);
+}
+$('#boot').addEventListener('click', boot);
+$('#boot').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') boot(); });
+
+// last video (Minecraft cake) ends -> black -> epilogue
+$('#finalVideo').addEventListener('ended', () => {
+  const black = $('#blackout');
+  black.classList.add('on');
+  setTimeout(() => {
+    go(4);
+    black.classList.remove('on');
+    ducked = false; sync();
+  }, 4500);
+});
+</script>
+</body>
+</html>
